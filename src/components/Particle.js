@@ -17,7 +17,13 @@ const Particle = () => {
     loaded={particlesLoaded}
 
     options={
-        { background: {
+        {
+            "fullScreen" : {
+                "enable": true,
+                "zIndex": -1
+            },
+
+            background: {
             color: {
                 value: "#000308",
             },
