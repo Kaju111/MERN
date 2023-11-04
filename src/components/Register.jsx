@@ -1,24 +1,50 @@
 import React, { useState } from "react";
 import Particle from "./Particle";
 import { toast } from "react-toastify";
+import {useNavigate} from "react-router-dom"
+import Header from "./Header";
 
 const Register = () => {
+
+  const  navigate = useNavigate()
  
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
+  const [submit, setSubmit] = useState(false)
 
   const handleRegister = (e) => {
-      e.preventDefault();
-      console.log("yes")
-      toast("You are registered successfully ");
+    e.preventDefault();
+    navigate("/signin")
+    //backend
+    fetch('http://localhost:5000/api/register',{
+      method: 'POST',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      body:JSON.stringify({
+        name,
+        email,
+        password
+      })
+    }).then(res => res.json())
+    .then(data=>{
+      console.log(data)
+      if(data.status === 'success') 
+      {toast('You are register')
+      localStorage.setItem('selfToken', data.token)
+      setSubmit(true)
+        
+      }
+      }).catch(err=>{
+        toast.err('Try a different user')
+      })
     };
 
   return (
     <div>
       <Particle />
-
+        <Header/>
       <section className="flex justify-center mt-[140px]">
         <div className="h-[100px] w-[350px] absolute ">
           <h1 className="text-[35px] text-center  bg-gradient-to-r from-[#323232] via-[#1F1E1E] to-[#000000]  text-white rounded-md py-[20px] font-primary border-[#969693] border-[0.2px]">

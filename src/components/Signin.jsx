@@ -1,20 +1,47 @@
 import React, { useState } from "react";
 import Particle from "./Particle";
 import { toast } from "react-toastify";
+import Header from "./Header";
+import {useNavigate} from "react-router-dom"
 
 const Signin = () => {
+
+  const  navigate = useNavigate()
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleRegister = (e) => {
     e.preventDefault();
-    console.log("yes");
-    toast.error("You are registered successfully ");
+    //backend
+    fetch('http://localhost:5000/api/signin',{
+        method: 'POST',
+        headers:{
+          'content-type' : 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+    }).then(res => res.json())
+    .then(data=>{
+      if(data.status === 'success'){
+        toast('You are Logged in')
+        localStorage.setItem('selfToken', data.token)
+        navigate('/dashboard')
+      }
+      if(data.status === 'not found'){
+        toast.error('User not found')
+      }
+    }).catch(err =>{
+      console.log(err)
+    })
   };
 
   return (
     <div>
       <Particle />
+      <Header/>
 
       <section className="mt-[170px]">
         <div className="">
@@ -36,6 +63,7 @@ const Signin = () => {
                     placeholder="Your email"
                     type="name"
                     className="p-[10px] rounded-md focus:outline-none"
+                    required
                   />
                 </h1>
                 <h1 className="font-primary w-[320px] m-auto bg-white rounded-md my-12 border-[#969693] border-[0.2px]">
@@ -43,13 +71,14 @@ const Signin = () => {
                     onChange={e=>setPassword(e.target.value)}
                     value={password}
                     placeholder="Your password"
-                    type="name"
+                    type="password"
                     className="p-[10px] rounded-md focus:outline-none"
+                    required
                   />
                 </h1>
                 <section className="flex justify-center mt-10">
                   <input
-                    className="font-primary bg-white rounded-md text-gray-400 items-center py-[10px] px-[25px] border-[#969693] border-[0.2px]"
+                    className="font-primary bg-white rounded-md cursor-pointer text-gray-400 items-center py-[10px] px-[25px] border-[#969693] border-[0.2px]"
                     value="SIGNIN"
                     type="submit"
                   />
